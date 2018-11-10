@@ -9,104 +9,104 @@
 };
 firebase.initializeApp(config);
 
-var trainStartMoment = moment("20181031 12:00 am", "YYYYMMDD h:mm a");
+var database = firebase.database(); 
+console.log(database);
 
-// Returns the minutes until an interval
-function minutesUntilInterval( frequency ){
-  	var intervalMoment = trainStartMoment.clone( );
-  	
-  	while( moment( ).diff( intervalMoment ) > 0 ) {
-  		intervalMoment.add( frequency, "minutes" );
-    }
-  	
-  	return intervalMoment.diff( moment( ), "minutes" );
-}
+$("#btn btn-primary").click(function(event) {
+  event.preventDefault(event);
+  return false
+  console.log('the button is working');
+    var trainName = $("#emailHelp").val().trim();  
+    var destionation = $("#destiation").val().trim();   
+    var firstTrainTime = $("#first-train-time").val().trim();
+    var frequency = $("#frequency").val().trim();
+
+// Creates local "temporary" object for holding employee data
+var trainName = {
+  name: trainName,
+  destination: destionation,
+  firstTime: firstTrainTime,
+  frequency: frequency
+}; 
+
+database.ref().push(trainName);
+
+// Logs everything to console
+console.log(trainName.name);
+console.log(destionation.destiation);
+console.log(firstTrainTime.firstTime);
+console.log(frequency.frequency);
+
+alert("Train time successfully added");
+
+// Clears all of the text-boxes
+$("#email-Help-input").val("");
+$("#destination-input").val("");
+$("#first-time-input").val("");
+$("#frequency-input").val("");
+});
 
 
-// TODO: Write code to INSERT a train record into the Firebase database when you click the Submit button
+database.ref().on("child_added", function(childSnapshot) {
+console.log(childSnapshot.val());
 
-// Data:
-// Train Name
-// Destination
-// Frequency
+// Store everything into a variable.
+var trainName = childSnapshot.val().name;
+var destiation = childSnapshot.val().role;
+var firstTrainTime = childSnapshot.val().start;
+var frequency = childSnapshot.val().rate;
 
-// TODO: SELECT all the train records in the database, and show their data on the page...
+// Train Info
+console.log(trainName);
+console.log(destiation);
+console.log(firstTrainTime);
+console.log(frequency);
 
-// Show the following for each train:
 
-// Train Name
-// Destination
-// Frequency
-// Next Arrival
-// Minutes Away
 
-// ...where Next Arrival and Minutes Away are calculated (with Moment.js) using the Frequency and the current time
+// Calculate the months worked using hardcore math
+// To calculate the months worked
+var trainName = moment().diff(moment(firstTrainTime, "X"), "hours");
+console.log(trainName);
 
-// 1. Select the train records
 
-var trains = [
-  {
-    trainName: "Acela Express",
-    destination: "New Haven",
-   	frequency: 25
-  },
-  { trainName: "Adirondack", 
-   destination: "Montreal", 
-   frequency: 3600
-  },  
-  { 
-    trainName: "Amtrack Cascades", 
-    destination: "Vancouver",
-    frequency: 15
-  }
-];
 
-var trainNumber = 1;
+// Create the new row
+var newRow = $("<tr>").append(
+  $("<td>").text(trainName),
+  $("<td>").text(destiation),
+  $("<td>").text(firstTrainTime),
+  $("<td>").text(frequency)
+);
 
-// 2. For each train...
-for( var i = 0; i < trains.length; i++ ){
+$("#form-group > tbody").append(newRow);
+});
 
-  // a. Calculate the Next Arrival
-  var trainRow = document.createElement( "tr" );
-  trainRow.id = "train-row-" + trainNumber;
-  document.getElementById( "trainlist" ).append( trainRow );
+// // Assumptions
+// var tFrequency = 3;
 
-  console.log( trains[i].frequency );
+// Time is 3:30 AM
+var firstTime = "03:30";
 
-  var minutesUntilNextArrival = minutesUntilInterval( trains[i].frequency );
-  
-  var nextArrival = moment().add( minutesUntilNextArrival, "minutes" );
+var firstTimeConverted = moment(firstTime, "HH:mm");
+console.log(firstTimeConverted);
 
-  // b. Show the Next Arrival time on the page
+// Current Time
+var currentTime = moment();
+console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
 
-  var nextArrivalContainer = document.createElement( "td" );
-  nextArrivalContainer.innerHTML = nextArrival.format( "h:mm a" );
+// Difference between the times
+var diffTime = moment().diff(firstTimeConverted, "minutes");
+console.log("DIFFERENCE IN TIME: " + diffTime);
 
-  var trainRow = document.getElementById( "train-row-" + trainNumber );
-  trainRow.append( nextArrivalContainer );
+// // Time apart (remainder)
+// var tRemainder = diffTime % tFrequency;
+// console.log(tRemainder);
 
-  trainNumber++;
-}
-/*
-moment().subtract(10, 'days').calendar(); // 10/30/2018
-moment().subtract(6, 'days').calendar();  // Last Saturday at 10:36 PM
-moment().subtract(3, 'days').calendar();  // Last Tuesday at 10:36 PM
-moment().subtract(1, 'days').calendar();  // Yesterday at 10:36 PM
-moment().calendar();                      // Today at 10:36 PM
-moment().add(1, 'days').calendar();       // Tomorrow at 10:36 PM
-moment().add(3, 'days').calendar();       // Monday at 10:36 PM
-moment().add(10, 'days').calendar();     
-*/
+// // Minute Until Train
+// var tMinutesTillTrain = tFrequency - tRemainder;
+// console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
 
-/*
-moment().format('MMMM Do YYYY, h:mm:ss a'); // November 9th 2018, 10:33:04 pm
-moment().format('dddd');                    // Friday
-moment().format("MMM Do YY");               // Nov 9th 18
-moment().format('YYYY [escaped] YYYY');     // 2018 escaped 2018
-moment().format();                          // 2018-11-09T22:33:04+09:00
-*/
-
-// c. Calculate the Minutes Away
-  
-  // d. Show the Minutes Away on the page
-  
+// // Next Train
+// var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+// console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));

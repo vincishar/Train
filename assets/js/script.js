@@ -83,6 +83,31 @@ var newRow = $("<tr>").append(
   $("<td>").text(time)
 );
 
+var addToTrainList = function(train){
+  var trainList = $("#trainlist");
+  trainList.append(`
+      <tr>
+      <th scope="row">${train.name}</th>
+      <td>${train.destination}</td>
+      <td>${train.frequency}</td>
+      <td>${train.time}</td>  
+    </tr>
+  `)
+
+}
+var trainDatabase = firebase.database().ref("/trains");
+trainDatabase.on("value", function(snapshot){
+  var trainList = $("#trainlist");
+  trainList.html("")
+  snapshot.forEach(function(train){
+      addToTrainList(train.val())
+
+  })
+
+})
+
+
+
 // Append the new row to the table
 $(".table > tbody").append(newRow);
 });
